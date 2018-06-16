@@ -127,3 +127,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# LINE BOT
+
+LINE_BOT_ACCESS_TOKEN = os.environ.get('LINE_BOT_ACCESS_TOKEN')
+LINE_BOT_ACCESS_SECRET = os.environ.get('LINE_BOT_ACCESS_SECRET')
