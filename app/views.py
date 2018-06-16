@@ -23,5 +23,5 @@ class CallbackView(View):
         return HttpResponse('OK')
 
     @method_decorator(csrf_exempt)
-    def dispatch(self, request, *args, **kwargs):
+    def dispatch(self, *args, **kwargs):
         return super(CallbackView, self).dispatch(*args, **kwargs)
