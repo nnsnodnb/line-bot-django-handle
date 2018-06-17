@@ -7,8 +7,14 @@ from linebot.exceptions import InvalidSignatureError, LineBotApiError
 from linebot.models import MessageEvent, FollowEvent, UnfollowEvent, TextMessage, TextSendMessage
 from . import line_bot_api, handler
 
+import re
+
 
 class CallbackView(View):
+
+    def __init__(self):
+        super(CallbackView, self).__init__()
+        self.buttonRegex = re.compile('(ボタン|ぼたｎ)')
 
     def post(self, request, *args, **kwargs):
         signature = request.META['HTTP_X_LINE_SIGNATURE']
@@ -43,10 +49,10 @@ class CallbackView(View):
             TextSendMessage('Unfollow Event')
         )
 
-    @staticmethod
     @handler.add(MessageEvent, message=TextMessage)
-    def message_event(event):
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(event.message.text)
-        )
+    def message_event(self, event):
+        if not self.buttonRegex.search(event.message.text):
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(event.message.text)
+            )
