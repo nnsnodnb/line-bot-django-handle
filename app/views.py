@@ -55,33 +55,34 @@ class CallbackView(View):
     @handler.add(MessageEvent, message=TextMessage)
     def message_event(event):
         if buttonRegex.search(event.message.text):
-            send_message = TemplateSendMessage(
-                alt_text='Buttons template',
-                template=ButtonsTemplate(
-                    thumbnail_image_url='https://example.com/image.jpg',
-                    title='Menu',
-                    text='Please select',
-                    actions=[
-                        PostbackTemplateAction(
-                            label='postback',
-                            text='postback text',
-                            data='action=buy&itemid=1'
-                        ),
-                        MessageTemplateAction(
-                            label='message',
-                            text='message text'
-                        ),
-                        URITemplateAction(
-                            label='uri',
-                            uri='http://example.com/'
-                        )
-                    ]
+            line_bot_api.reply_message(
+                event.reply_token,
+                TemplateSendMessage(
+                    alt_text='Buttons template',
+                    template=ButtonsTemplate(
+                        thumbnail_image_url='https://example.com/image.jpg',
+                        title='Menu',
+                        text='Please select',
+                        actions=[
+                            PostbackTemplateAction(
+                                label='postback',
+                                text='postback text',
+                                data='action=buy&itemid=1'
+                            ),
+                            MessageTemplateAction(
+                                label='message',
+                                text='message text'
+                            ),
+                            URITemplateAction(
+                                label='uri',
+                                uri='http://example.com/'
+                            )
+                        ]
+                    )
                 )
             )
         else:
-            send_message = TextSendMessage(event.message.text)
-
-        line_bot_api.reply_message(
-            event.reply_token,
-            send_message
-        )
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text=event.message.text)
+            )
