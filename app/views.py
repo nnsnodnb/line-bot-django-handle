@@ -14,7 +14,7 @@ class CallbackView(View):
 
     def __init__(self):
         super(CallbackView, self).__init__()
-        self.buttonRegex = re.compile('(ボタン|ぼたｎ)')
+        self.buttonRegex = re.compile('(ボタン|ぼたん)')
 
     def post(self, request, *args, **kwargs):
         signature = request.META['HTTP_X_LINE_SIGNATURE']
