@@ -5,12 +5,14 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import View
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import (
-    AccountLinkEvent, MessageEvent, FollowEvent, UnfollowEvent,
-    TextMessage,
+    AccountLinkEvent, MessageEvent, FollowEvent, UnfollowEvent, PostbackEvent,
+    ImagemapSendMessage, TextMessage,
     ButtonsTemplate, TemplateSendMessage, TextSendMessage,
-    MessageTemplateAction, PostbackTemplateAction, URITemplateAction,
+    MessageTemplateAction, PostbackTemplateAction, URITemplateAction, URIImagemapAction,
+    BaseSize, ImagemapArea,
 )
-from . import line_bot_api, handler
+from urllib import parse
+from . import line_bot_api, handler, demo_image_url
 
 import base64
 import random
@@ -66,6 +68,17 @@ class CallbackView(View):
             )
 
     @staticmethod
+    @handler.add(PostbackEvent)
+    def postback_event(event):
+        #  1回目にMessageEvent発生後、2回目のcallbackでPostbackEvent発生
+        data = dict(parse.parse_qsl(parse.urlsplit(event.postback.data).path))
+        if data['action'] == 'buy':
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage('Postback received.')
+            )
+
+    @staticmethod
     @handler.add(MessageEvent, message=TextMessage)
     def message_event(event):
         if buttonRegex.search(event.message.text):
@@ -74,7 +87,7 @@ class CallbackView(View):
                 TemplateSendMessage(
                     alt_text='Buttons template',
                     template=ButtonsTemplate(
-                        thumbnail_image_url='https://example.com/image.jpg',
+                        thumbnail_image_url=demo_image_url,
                         title='Menu',
                         text='Please select',
                         actions=[
@@ -110,8 +123,20 @@ class CallbackView(View):
             line_bot_api.reply_message(
                 event.reply_token,
                 [
-                    TextSendMessage(text=f'こちらにアクセスしてログインしてください\n'
-                                         f'https://example.com/link?linkToken={link_token}'),
+                    ImagemapSendMessage(
+                        base_url='https://dl.nnsnodnb.moe/line_sample',
+                        alt_text='ImageMap sample.',
+                        base_size=BaseSize(width=1040, height=520),
+                        actions=[
+                            URIImagemapAction(
+                                link_uri=f'https://example.com/link?linkToken={link_token}',
+                                area=ImagemapArea(
+                                    x=0, y=0, width=1040, height=520
+                                )
+                            )
+                        ]
+                    ),
+                    TextSendMessage(f'連携解除機能の提供及び連携解除機能のユーザへの通知'),
                     TextSendMessage(f'連携成功時のリンク\n{success_link}')
                 ]
             )
