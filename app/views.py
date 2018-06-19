@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import View
-from linebot.exceptions import InvalidSignatureError, LineBotApiError
+from linebot.exceptions import InvalidSignatureError
 from linebot.models import (
     AccountLinkEvent, MessageEvent, FollowEvent, UnfollowEvent,
     TextMessage,
@@ -12,9 +12,11 @@ from linebot.models import (
 )
 from . import line_bot_api, handler
 
+import base64
+import random
 import re
 import requests
-import uuid
+import secrets
 
 buttonRegex = re.compile('(ボタン|ぼたん)')
 
@@ -100,8 +102,9 @@ class CallbackView(View):
                 return
 
             link_token = response['linkToken']
-            nonce = str(uuid.uuid4())
-            success_link = f'https://access.line.me/dialog/bot/accountLink?linkToken={link_token}&nonce={nonce}'
+            nonce = secrets.token_urlsafe(random.randint(50, 100))
+            encode_nonce = base64.b64encode(nonce.encode('utf-8'))
+            success_link = f'https://access.line.me/dialog/bot/accountLink?linkToken={link_token}&nonce={encode_nonce}'
 
             # デモ用なので連携できたとします
             line_bot_api.reply_message(
