@@ -70,7 +70,7 @@ class CallbackView(View):
     @staticmethod
     @handler.add(PostbackEvent)
     def postback_event(event):
-        #  1回目にMessageEvent発生後、2回目のcallbackでPostbackEvent発生
+        #  1回目にPostbackEvent発生後、2回目のcallbackでMessageEvent発生
         data = dict(parse.parse_qsl(parse.urlsplit(event.postback.data).path))
         if data['action'] == 'buy':
             line_bot_api.reply_message(
@@ -115,9 +115,9 @@ class CallbackView(View):
                 return
 
             link_token = response['linkToken']
-            nonce = secrets.token_urlsafe(random.randint(50, 100))
-            encode_nonce = base64.b64encode(nonce.encode('utf-8'))
-            success_link = f'https://access.line.me/dialog/bot/accountLink?linkToken={link_token}&nonce={encode_nonce}'
+            # nonce = secrets.token_urlsafe(random.randint(50, 100))
+            # encode_nonce = base64.b64encode(nonce.encode('utf-8'))
+            # success_url = f'https://access.line.me/dialog/bot/accountLink?linkToken={link_token}&nonce={encode_nonce}'
 
             # デモ用なので連携できたとします
             line_bot_api.reply_message(
@@ -129,7 +129,8 @@ class CallbackView(View):
                         base_size=BaseSize(width=1040, height=520),
                         actions=[
                             URIImagemapAction(
-                                link_uri=f'https://example.com/link?linkToken={link_token}',
+                                link_uri=f'https://example.com/link?linkToken={link_token}'
+                                         f'&user_id={event.source.user_id}',
                                 area=ImagemapArea(
                                     x=0, y=0, width=1040, height=520
                                 )
@@ -137,9 +138,11 @@ class CallbackView(View):
                         ]
                     ),
                     TextSendMessage(f'連携解除機能の提供及び連携解除機能のユーザへの通知'),
-                    TextSendMessage(f'連携成功時のリンク\n{success_link}')
+                    # TextSendMessage(f'連携成功時のリンク\n{success_url}')
                 ]
             )
+            # ユーザの特定が完了したときに送信
+            # line_bot_api.push_message(to=event.source.user_id, messages=TextSendMessage('これがプッシュメッセージ'))
         else:
             line_bot_api.reply_message(
                 event.reply_token,
