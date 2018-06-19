@@ -1,6 +1,5 @@
 from django.contrib.auth import login
 from django.contrib.auth.views import LoginView as LoginViewBase
-from django.contrib.sites.shortcuts import get_current_site
 from django.http.response import HttpResponseBadRequest, HttpResponseRedirect
 
 import base64
@@ -12,15 +11,9 @@ class LoginView(LoginViewBase):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        current_site = get_current_site(self.request)
         context.update({
-            self.redirect_field_name: self.get_redirect_url(),
-            'site': current_site,
-            'site_name': current_site.name,
             'link_token': self.request.GET['link_token']
         })
-        if self.extra_context is not None:
-            context.update(self.extra_context)
         return context
 
     def get(self, request, *args, **kwargs):
