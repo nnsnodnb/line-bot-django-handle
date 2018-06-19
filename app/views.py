@@ -1,5 +1,5 @@
 from django.http.response import HttpResponse, HttpResponseBadRequest
-from django.shortcuts import render
+from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import View
@@ -14,11 +14,8 @@ from linebot.models import (
 from urllib import parse
 from . import line_bot_api, handler, demo_image_url
 
-import base64
-import random
 import re
 import requests
-import secrets
 
 buttonRegex = re.compile('(ボタン|ぼたん)')
 
@@ -62,6 +59,9 @@ class CallbackView(View):
     @handler.add(AccountLinkEvent)
     def account_link_event(event):
         if event.link.result == 'ok':
+            # nonceを使ってQuery後、Userの紐づけ
+            user_id = event.source['userId']
+            nonce = event.link.nonce
             line_bot_api.reply_message(
                 event.reply_token,
                 TextSendMessage('Account Link success.')
@@ -115,9 +115,9 @@ class CallbackView(View):
                 return
 
             link_token = response['linkToken']
-            # nonce = secrets.token_urlsafe(random.randint(50, 100))
-            # encode_nonce = base64.b64encode(nonce.encode('utf-8'))
-            # success_url = f'https://access.line.me/dialog/bot/accountLink?linkToken={link_token}&nonce={encode_nonce}'
+
+            url = f'http://10.0.1.2:8000{reverse("accounts:line_login_view")}' \
+                  f'?link_token={link_token}'
 
             # デモ用なので連携できたとします
             line_bot_api.reply_message(
@@ -129,8 +129,7 @@ class CallbackView(View):
                         base_size=BaseSize(width=1040, height=520),
                         actions=[
                             URIImagemapAction(
-                                link_uri=f'https://example.com/link?linkToken={link_token}'
-                                         f'&user_id={event.source.user_id}',
+                                link_uri=url,
                                 area=ImagemapArea(
                                     x=0, y=0, width=1040, height=520
                                 )
@@ -138,11 +137,8 @@ class CallbackView(View):
                         ]
                     ),
                     TextSendMessage(f'連携解除機能の提供及び連携解除機能のユーザへの通知'),
-                    # TextSendMessage(f'連携成功時のリンク\n{success_url}')
                 ]
             )
-            # ユーザの特定が完了したときに送信
-            # line_bot_api.push_message(to=event.source.user_id, messages=TextSendMessage('これがプッシュメッセージ'))
         else:
             line_bot_api.reply_message(
                 event.reply_token,
