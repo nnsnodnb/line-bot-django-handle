@@ -119,7 +119,6 @@ class CallbackView(View):
             url = f'http://10.0.1.2:8000{reverse("accounts:line_login_view")}' \
                   f'?link_token={link_token}'
 
-            # デモ用なので連携できたとします
             line_bot_api.reply_message(
                 event.reply_token,
                 [
