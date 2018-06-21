@@ -1,4 +1,7 @@
 from django.db import models
+from django.contrib.auth import get_user_model
+
+UserModel = get_user_model()
 
 
 class Line(models.Model):
@@ -7,6 +10,8 @@ class Line(models.Model):
     display_name = models.CharField(max_length=200, blank=False, null=False, default='')
     picture_url = models.URLField(max_length=500, blank=False, null=False, default='')
     status_message = models.CharField(max_length=500, blank=False, null=False, default='')
+    service_user = models.ForeignKey(UserModel, on_delete=models.CASCADE)
+    is_active = models.BooleanField(default=True)
 
     class Meta:
         verbose_name = 'LINE Account'
