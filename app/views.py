@@ -70,7 +70,6 @@ class CallbackView(View):
     @staticmethod
     @handler.add(PostbackEvent)
     def postback_event(event):
-        #  1回目にPostbackEvent発生後、2回目のcallbackでMessageEvent発生
         data = dict(parse.parse_qsl(parse.urlsplit(event.postback.data).path))
         if data['action'] == 'buy':
             line_bot_api.reply_message(
