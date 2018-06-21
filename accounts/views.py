@@ -31,8 +31,7 @@ class LoginView(LoginViewBase):
         login(self.request, user)
 
         nonce = secrets.token_urlsafe(random.randint(50, 100))
-        encode_nonce = base64.b64encode(nonce.encode('utf-8')).decode('utf-8')
         # nonce, userの保存及びLINEユーザとuserの紐付け
-        url = f'https://access.line.me/dialog/bot/accountLink?linkToken={link_token}&nonce={encode_nonce}'
+        url = f'https://access.line.me/dialog/bot/accountLink?linkToken={link_token}&nonce={nonce}'
 
         return HttpResponseRedirect(url)
