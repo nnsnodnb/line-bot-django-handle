@@ -5,6 +5,6 @@ from .views import LoginView
 app_name = 'accounts'
 
 urlpatterns = [
-    path('line/login/', LoginView.as_view(), name='line_login_view'),
+    path('line/<str:link_token>/login/', LoginView.as_view(), name='line_login_view'),
     path('line/logout/', LogoutView.as_view(), name='line_logout_view'),
 ]

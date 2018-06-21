@@ -9,15 +9,9 @@ class LoginView(LoginViewBase):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update({
-            'link_token': self.request.GET['link_token']
+            'link_token': self.kwargs['link_token']
         })
         return context
-
-    def get(self, request, *args, **kwargs):
-        if 'link_token' not in request.GET:
-            return HttpResponseBadRequest(b'Require link_token parameter.')
-
-        return super(LoginView, self).get(request, args, kwargs)
 
     def form_valid(self, form):
         if 'link_token' not in form.data:

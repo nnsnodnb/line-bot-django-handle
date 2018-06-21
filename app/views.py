@@ -180,8 +180,7 @@ class CallbackView(View):
 
                 link_token = response['linkToken']
 
-                url = f'http://10.0.1.2:8000{reverse("accounts:line_login_view")}' \
-                      f'?link_token={link_token}'
+                url = f'http://10.0.1.2:8000{reverse("accounts:line_login_view", kwargs={"link_token": link_token})}'
 
                 line_bot_api.reply_message(
                     event.reply_token,
