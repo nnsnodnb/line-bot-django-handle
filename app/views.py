@@ -68,6 +68,7 @@ class CallbackView(View):
             nonce = Nonce.objects.select_related('user').get(pk=event.link.nonce)
             try:
                 line = Line.objects.get(pk=profile.user_id)
+                line.update(profile=profile, user=nonce.user)
                 line.is_active = True
                 line.save()
             except Line.DoesNotExist:
@@ -97,14 +98,13 @@ class CallbackView(View):
             if not line.is_active:
                 text_send_message = TextSendMessage('アカウント連携がされていないようです')
             elif data['confirm'] == '0' or not data['confirm'] or data['confirm'] == 0:
-                line_bot_api.reply_message(
-                    event.reply_token,
-                    TextSendMessage('アカウント連携解除をキャンセルしました')
-                )
+                text_send_message = TextSendMessage('アカウント連携解除をキャンセルしました')
             elif data['confirm'] == '1' or data['confirm'] or data['confirm'] == 1:
+                username = line.service_user.username
+                line.service_user = None
                 line.is_active = False
                 line.save()
-                text_send_message = TextSendMessage(f'{line.service_user.username}さんのアカウント連携を解除しました')
+                text_send_message = TextSendMessage(f'{username}さんのアカウント連携を解除しました')
 
         if not text_send_message:
             text_send_message = TextSendMessage('不明な操作が行われました')
