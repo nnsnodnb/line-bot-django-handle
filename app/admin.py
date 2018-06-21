@@ -5,6 +5,7 @@ from .models import Nonce
 class NonceAdmin(admin.ModelAdmin):
 
     list_display = ('nonce', 'user',)
+    list_display_links = None
 
     def get_readonly_fields(self, request, obj=None):
         return self.fields or [f.name for f in self.opts.fields]

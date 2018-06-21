@@ -4,7 +4,8 @@ from .models import Line
 
 class LineAdmin(admin.ModelAdmin):
 
-    list_display = ('user_id', 'display_name', 'picture_url', 'status_message',)
+    list_display = ('user_id', 'display_name', 'picture_url', 'status_message', 'service_user', 'is_active',)
+    list_display_links = ('user_id', 'display_name', 'picture_url',)
 
     def get_readonly_fields(self, request, obj=None):
         return self.fields or [f.name for f in self.opts.fields]
