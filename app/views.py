@@ -60,7 +60,7 @@ class CallbackView(View):
     def account_link_event(event):
         if event.link.result == 'ok':
             # nonceを使ってQuery後、Userの紐づけ
-            user_id = event.source['userId']
+            user_id = event.source.user_id
             nonce = event.link.nonce
             line_bot_api.reply_message(
                 event.reply_token,
