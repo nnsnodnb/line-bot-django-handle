@@ -93,7 +93,7 @@ class CallbackView(View):
                         actions=[
                             PostbackTemplateAction(
                                 label='postback',
-                                text='postback text',
+                                displayText='postback text',
                                 data='action=buy&itemid=1'
                             ),
                             MessageTemplateAction(
