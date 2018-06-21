@@ -1,10 +1,7 @@
+from app.models import Nonce
 from django.contrib.auth import login
 from django.contrib.auth.views import LoginView as LoginViewBase
 from django.http.response import HttpResponseBadRequest, HttpResponseRedirect
-
-import base64
-import random
-import secrets
 
 
 class LoginView(LoginViewBase):
@@ -30,8 +27,9 @@ class LoginView(LoginViewBase):
         user = form.get_user()
         login(self.request, user)
 
-        nonce = secrets.token_urlsafe(random.randint(50, 100))
-        # nonce, userの保存及びLINEユーザとuserの紐付け
+        nonce = Nonce()
+        nonce.user = user
+        nonce.save()
         url = f'https://access.line.me/dialog/bot/accountLink?linkToken={link_token}&nonce={nonce}'
 
         return HttpResponseRedirect(url)

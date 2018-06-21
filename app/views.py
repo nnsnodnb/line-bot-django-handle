@@ -13,6 +13,7 @@ from linebot.models import (
 )
 from urllib import parse
 from . import line_bot_api, handler, demo_image_url
+from .models import Nonce
 
 import re
 import requests
@@ -61,10 +62,11 @@ class CallbackView(View):
         if event.link.result == 'ok':
             # nonceを使ってQuery後、Userの紐づけ
             user_id = event.source.user_id
-            nonce = event.link.nonce
+            nonce = Nonce.objects.select_related('user').get(pk=event.link.nonce)
+
             line_bot_api.reply_message(
                 event.reply_token,
-                TextSendMessage('Account Link success.')
+                TextSendMessage(f'Account Link success.\nこんにちは！{nonce.user.username}さん')
             )
 
     @staticmethod
