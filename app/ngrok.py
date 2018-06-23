@@ -1,3 +1,4 @@
+import requests
 import socket
 
 BASE_HOST = '127.0.0.1'
@@ -20,4 +21,8 @@ class Client(object):
         s.close()
 
     def get_public_url(self):
-        pass
+        response = requests.post(f'http://{self.base_host}:{self.port}/api/tunnels').json()
+        tunnels = response['tunnels']
+        tunnel = tunnels[0]
+        public_url = tunnel['public_url']
+        return public_url
