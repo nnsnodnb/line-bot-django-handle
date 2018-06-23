@@ -16,6 +16,7 @@ from linebot.models import (
 from urllib import parse
 from . import line_bot_api, handler, demo_image_url
 from .models import Nonce
+from .ngrok import Client
 
 import re
 import requests
@@ -175,12 +176,15 @@ class CallbackView(View):
             except (Line.DoesNotExist, LineAccountInactiveError):
                 response = requests.post(f'https://api.line.me/v2/bot/user/{event.source.user_id}/linkToken',
                                          headers=line_bot_api.headers).json()
+
+                public_url = Client().get_public_url()
+
                 if 'linkToken' not in response:
                     return
 
                 link_token = response['linkToken']
 
-                url = f'http://10.0.1.2:8000{reverse("accounts:line_login_view", kwargs={"link_token": link_token})}'
+                url = f'{public_url}{reverse("accounts:line_login_view", kwargs={"link_token": link_token})}'
 
                 line_bot_api.reply_message(
                     event.reply_token,
