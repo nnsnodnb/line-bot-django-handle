@@ -61,6 +61,7 @@ class CallbackView(View):
 
     @staticmethod
     @handler.add(AccountLinkEvent)
+    # https://developers.line.me/en/docs/messaging-api/reference/#account-link-event
     def account_link_event(event):
         if event.link.result == 'ok':
             user_id = event.source.user_id
@@ -84,6 +85,7 @@ class CallbackView(View):
 
     @staticmethod
     @handler.add(PostbackEvent)
+    # https://developers.line.me/en/docs/messaging-api/reference/#postback-event
     def postback_event(event):
         text_send_message = None
 
@@ -117,6 +119,7 @@ class CallbackView(View):
 
     @staticmethod
     @handler.add(MessageEvent, message=TextMessage)
+    # https://developers.line.me/en/docs/messaging-api/reference/#message-event
     def message_event(event):
         if buttonRegex.search(event.message.text):
             line_bot_api.reply_message(
