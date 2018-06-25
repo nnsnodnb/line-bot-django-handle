@@ -7,10 +7,10 @@ BASE_HOST = '127.0.0.1'
 PORT = 4040
 
 
-class Client(object):
+class Ngrok(object):
 
     def __init__(self, base_host=BASE_HOST, port=PORT, *args, **kwargs):
-        super(Client, self).__init__(*args, **kwargs)
+        super(Ngrok, self).__init__(*args, **kwargs)
         self.base_host = base_host
         self.port = port
         self._check_launch_ngrok()

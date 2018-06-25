@@ -16,7 +16,7 @@ from linebot.models import (
 from urllib import parse
 from . import line_bot_api, handler, demo_image_url
 from .models import Nonce
-from .ngrok import Client
+from .ngrok import Ngrok
 
 import re
 import requests
@@ -177,7 +177,7 @@ class CallbackView(View):
                 response = requests.post(f'https://api.line.me/v2/bot/user/{event.source.user_id}/linkToken',
                                          headers=line_bot_api.headers).json()
 
-                public_url = Client().get_public_url()
+                public_url = Ngrok().get_public_url()
 
                 if 'linkToken' not in response:
                     return
