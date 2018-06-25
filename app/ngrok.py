@@ -21,7 +21,7 @@ class Client(object):
         s.close()
 
     def get_public_url(self):
-        response = requests.post(f'http://{self.base_host}:{self.port}/api/tunnels').json()
+        response = requests.get(f'http://{self.base_host}:{self.port}/api/tunnels').json()
         tunnels = response['tunnels']
         tunnel = tunnels[0]
         public_url = tunnel['public_url']
