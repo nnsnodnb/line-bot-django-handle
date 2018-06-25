@@ -4,7 +4,7 @@ from django.http.response import HttpResponse, HttpResponseBadRequest
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic.base import View
+from django.views.generic.base import TemplateView, View
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import (
     AccountLinkEvent, MessageEvent, FollowEvent, UnfollowEvent, PostbackEvent,
@@ -210,3 +210,11 @@ class CallbackView(View):
                 event.reply_token,
                 TextSendMessage(text=event.message.text)
             )
+
+
+class URLSchemeView(TemplateView):
+
+    template_name = 'app/url_scheme.html'
+
+    def get(self, request, *args, **kwargs):
+        return super(URLSchemeView, self).get(request, *args, **kwargs)
