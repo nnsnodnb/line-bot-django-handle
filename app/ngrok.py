@@ -1,3 +1,5 @@
+from django.conf import settings
+
 import requests
 import socket
 
@@ -21,6 +23,8 @@ class Client(object):
         s.close()
 
     def get_public_url(self):
+        if not settings.USE_NGROK:
+            return None
         response = requests.get(f'http://{self.base_host}:{self.port}/api/tunnels').json()
         tunnels = response['tunnels']
         tunnel = tunnels[0]

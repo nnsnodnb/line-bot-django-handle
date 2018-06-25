@@ -136,3 +136,7 @@ STATIC_URL = '/static/'
 
 LINE_BOT_ACCESS_TOKEN = os.environ.get('LINE_BOT_ACCESS_TOKEN')
 LINE_BOT_ACCESS_SECRET = os.environ.get('LINE_BOT_ACCESS_SECRET')
+
+# Ngrok
+
+USE_NGROK = True
