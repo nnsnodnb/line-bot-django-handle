@@ -10,6 +10,7 @@ from linebot.models import (
     AccountLinkEvent, MessageEvent, FollowEvent, UnfollowEvent, PostbackEvent,
     ImagemapSendMessage, TextMessage,
     ButtonsTemplate, ConfirmTemplate, TemplateSendMessage, TextSendMessage, StickerSendMessage, ImageSendMessage,
+    VideoSendMessage,
     MessageTemplateAction, PostbackTemplateAction, PostbackAction, URITemplateAction, URIImagemapAction,
     BaseSize, ImagemapArea,
 )
@@ -24,6 +25,7 @@ import requests
 buttonRegex = re.compile('(ボタン|ぼたん)')
 stickerRegex = re.compile('(ステッカー|すてっかー|ステッカ|すてっか|sticker)')
 imageRegex = re.compile('(画像|がぞう|イメージ|いめーじ|image)')
+videoRegex = re.compile('(動画|どうが|ムービー|むーびー|むーゔぃ|ムーヴぃ|movie)')
 
 
 class CallbackView(View):
@@ -162,6 +164,13 @@ class CallbackView(View):
             line_bot_api.reply_message(
                 event.reply_token,
                 ImageSendMessage(original_content_url=demo_image_url, preview_image_url=demo_image_url)
+            )
+        elif videoRegex.search(event.message.text.lower()):
+            # https://developers.line.me/en/docs/messaging-api/reference/#video-message
+            line_bot_api.reply_message(
+                event.reply_token,
+                VideoSendMessage(original_content_url='https://dl.nnsnodnb.moe/line_sample/linebot_video_sample.mp4',
+                                 preview_image_url=demo_image_url)
             )
         elif event.message.text == 'アカウント連携':
             try:
