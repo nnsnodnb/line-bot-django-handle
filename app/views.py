@@ -10,7 +10,7 @@ from linebot.models import (
     AccountLinkEvent, MessageEvent, FollowEvent, UnfollowEvent, PostbackEvent,
     ImagemapSendMessage, TextMessage,
     ButtonsTemplate, ConfirmTemplate, TemplateSendMessage, TextSendMessage, StickerSendMessage, ImageSendMessage,
-    VideoSendMessage,
+    VideoSendMessage, LocationSendMessage, CarouselTemplate, CarouselColumn, MessageAction, URIAction,
     MessageTemplateAction, PostbackTemplateAction, PostbackAction, URITemplateAction, URIImagemapAction,
     BaseSize, ImagemapArea,
 )
@@ -26,6 +26,7 @@ buttonRegex = re.compile('(ボタン|ぼたん)')
 stickerRegex = re.compile('(ステッカー|すてっかー|ステッカ|すてっか|sticker)')
 imageRegex = re.compile('(画像|がぞう|イメージ|いめーじ|image)')
 videoRegex = re.compile('(動画|どうが|ムービー|むーびー|むーゔぃ|ムーヴぃ|movie)')
+locationRegex = re.compile('(場所|ばしょ|バショ|location|ろけーしょん)')
 
 
 class CallbackView(View):
@@ -171,6 +172,65 @@ class CallbackView(View):
                 event.reply_token,
                 VideoSendMessage(original_content_url='https://dl.nnsnodnb.moe/line_sample/linebot_video_sample.mp4',
                                  preview_image_url=demo_image_url)
+            )
+        elif locationRegex.search(event.message.text.lower()):
+            # https://developers.line.me/en/docs/messaging-api/reference/#location-message
+            line_bot_api.reply_message(
+                event.reply_token,
+                LocationSendMessage(title='京都アスニー', address='京都市中京区聚楽廻松下町9-2',
+                                    latitude=35.0190007, longitude=135.7362375)
+            )
+        elif event.message.text == 'カルーセル':
+            # https://developers.line.me/en/docs/messaging-api/reference/#carousel
+            line_bot_api.reply_message(
+                event.reply_token,
+                TemplateSendMessage(
+                    alt_text='Carousel template',
+                    template=CarouselTemplate(
+                        columns=[
+                            CarouselColumn(
+                                thumbnail_image_url='https://example.com/item1.jpg',
+                                title='this is menu1',
+                                text='description1',
+                                actions=[
+                                    PostbackAction(
+                                        label='postback1',
+                                        displayText='postback text1',
+                                        data='action=buy&itemid=1'
+                                    ),
+                                    MessageAction(
+                                        label='message1',
+                                        text='message text1'
+                                    ),
+                                    URIAction(
+                                        label='uri1',
+                                        uri='http://example.com/1'
+                                    )
+                                ]
+                            ),
+                            CarouselColumn(
+                                thumbnail_image_url='https://example.com/item2.jpg',
+                                title='this is menu2',
+                                text='description2',
+                                actions=[
+                                    PostbackAction(
+                                        label='postback2',
+                                        displayText='postback text2',
+                                        data='action=buy&itemid=2'
+                                    ),
+                                    MessageAction(
+                                        label='message2',
+                                        text='message text2'
+                                    ),
+                                    URIAction(
+                                        label='uri2',
+                                        uri='http://example.com/2'
+                                    )
+                                ]
+                            )
+                        ]
+                    )
+                )
             )
         elif event.message.text == 'アカウント連携':
             try:
