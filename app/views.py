@@ -10,7 +10,8 @@ from linebot.models import (
     AccountLinkEvent, MessageEvent, FollowEvent, UnfollowEvent, PostbackEvent,
     ImagemapSendMessage, TextMessage,
     ButtonsTemplate, ConfirmTemplate, TemplateSendMessage, TextSendMessage, StickerSendMessage, ImageSendMessage,
-    VideoSendMessage, LocationSendMessage, CarouselTemplate, CarouselColumn, MessageAction, URIAction,
+    VideoSendMessage, LocationSendMessage, CarouselTemplate, CarouselColumn, ImageCarouselTemplate, ImageCarouselColumn,
+    MessageAction, URIAction,
     MessageTemplateAction, PostbackTemplateAction, PostbackAction, URITemplateAction, URIImagemapAction,
     BaseSize, ImagemapArea,
 )
@@ -24,7 +25,7 @@ import requests
 
 buttonRegex = re.compile('(ボタン|ぼたん)')
 stickerRegex = re.compile('(ステッカー|すてっかー|ステッカ|すてっか|sticker)')
-imageRegex = re.compile('(画像|がぞう|イメージ|いめーじ|image)')
+imageRegex = re.compile('(画像|がぞう)')
 videoRegex = re.compile('(動画|どうが|ムービー|むーびー|むーゔぃ|ムーヴぃ|movie)')
 locationRegex = re.compile('(場所|ばしょ|バショ|location|ろけーしょん)')
 
@@ -227,6 +228,33 @@ class CallbackView(View):
                                         uri='http://example.com/2'
                                     )
                                 ]
+                            )
+                        ]
+                    )
+                )
+            )
+        elif event.message.text == 'イメージカルーセル':
+            # https://developers.line.me/en/docs/messaging-api/reference/#image-carousel
+            line_bot_api.reply_message(
+                event.reply_token,
+                TemplateSendMessage(
+                    alt_text='ImageCarousel template',
+                    template=ImageCarouselTemplate(
+                        columns=[
+                            ImageCarouselColumn(
+                                image_url='https://dl.nnsnodnb.moe/line_sample/image_carousel_1.jpg',
+                                action=PostbackAction(
+                                    label='函館のマンホール',
+                                    displayText='postback text1',
+                                    data='action=buy&itemid=1'
+                                )
+                            ),
+                            ImageCarouselColumn(
+                                image_url='https://dl.nnsnodnb.moe/line_sample/image_carousel_2.jpg',
+                                action=URIAction(
+                                    label='白鷺',
+                                    uri='https://ja.wikipedia.org/wiki/%E7%99%BD%E9%B7%BA'
+                                )
                             )
                         ]
                     )
