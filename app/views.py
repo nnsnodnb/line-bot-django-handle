@@ -9,7 +9,7 @@ from linebot.exceptions import InvalidSignatureError
 from linebot.models import (
     AccountLinkEvent, MessageEvent, FollowEvent, UnfollowEvent, PostbackEvent,
     ImagemapSendMessage, TextMessage,
-    ButtonsTemplate, ConfirmTemplate, TemplateSendMessage, TextSendMessage,
+    ButtonsTemplate, ConfirmTemplate, TemplateSendMessage, TextSendMessage, StickerSendMessage,
     MessageTemplateAction, PostbackTemplateAction, PostbackAction, URITemplateAction, URIImagemapAction,
     BaseSize, ImagemapArea,
 )
@@ -22,6 +22,7 @@ import re
 import requests
 
 buttonRegex = re.compile('(ボタン|ぼたん)')
+stickerRegex = re.compile('(ステッカー|すてっかー|ステッカ|すてっか|sticker)')
 
 
 class CallbackView(View):
@@ -147,6 +148,13 @@ class CallbackView(View):
                         ]
                     )
                 )
+            )
+        elif stickerRegex.search(event.message.text.lower()):
+            # https://developers.line.me/en/docs/messaging-api/reference/#sticker-message
+            # https://developers.line.me/media/messaging-api/sticker_list.pdf
+            line_bot_api.reply_message(
+                event.reply_token,
+                StickerSendMessage(package_id='1', sticker_id='116')
             )
         elif event.message.text == 'アカウント連携':
             try:
