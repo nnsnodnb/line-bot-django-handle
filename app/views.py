@@ -1,12 +1,12 @@
 from accounts.errors import LineAccountInactiveError
 from accounts.models import Line
 from django.conf import settings
-from django.http.response import HttpResponse, HttpResponseBadRequest
+from django.http.response import HttpResponse, HttpResponseBadRequest, HttpResponseServerError
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import TemplateView, View
-from linebot.exceptions import InvalidSignatureError
+from linebot.exceptions import InvalidSignatureError, LineBotApiError
 from linebot.models import (
     AccountLinkEvent, MessageEvent, FollowEvent, UnfollowEvent, PostbackEvent,
     ImagemapSendMessage, TextMessage,
@@ -55,6 +55,9 @@ class CallbackView(View):
             handler.handle(body, signature)
         except InvalidSignatureError:
             return HttpResponseBadRequest()
+        except LineBotApiError as e:
+            print(e)
+            return HttpResponseServerError()
 
         return HttpResponse('OK')
 
@@ -334,6 +337,12 @@ class CallbackView(View):
                         TextSendMessage(f'連携解除機能の提供及び連携解除機能のユーザへの通知'),
                     ]
                 )
+        elif event.message.text == '終わり':
+            image_url = f'{PUBLIC_URL}/static/images/finish_response.jpg'
+            line_bot_api.reply_message(
+                event.reply_token,
+                ImageSendMessage(original_content_url=image_url, preview_image_url=image_url)
+            )
         else:
             line_bot_api.reply_message(
                 event.reply_token,
