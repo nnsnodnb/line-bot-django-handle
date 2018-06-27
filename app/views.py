@@ -130,7 +130,8 @@ class CallbackView(View):
                 text_send_message = TextSendMessage(f'{username}さんのアカウント連携を解除しました')
 
         if not text_send_message:
-            text_send_message = TextSendMessage('不明な操作が行われました')
+            image_url = f'{PUBLIC_URL}/static/images/wrong_postback_response.jpg'
+            text_send_message = ImageSendMessage(original_content_url=image_url, preview_image_url=image_url)
 
         line_bot_api.reply_message(
             event.reply_token,
