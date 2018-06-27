@@ -157,7 +157,7 @@ class CallbackView(View):
                         actions=[
                             PostbackTemplateAction(
                                 label='postback',
-                                displayText='postback text',
+                                display_text='postback text',
                                 data='action=buy&itemid=1'
                             ),
                             MessageTemplateAction(
@@ -215,7 +215,7 @@ class CallbackView(View):
                                 actions=[
                                     PostbackAction(
                                         label='いいね',
-                                        displayText='いいね！',
+                                        display_text='いいね！',
                                         data='action=like&item_id=1'
                                     ),
                                     MessageAction(
@@ -235,7 +235,7 @@ class CallbackView(View):
                                 actions=[
                                     PostbackAction(
                                         label='いいね',
-                                        displayText='いいね！',
+                                        display_text='いいね！',
                                         data='action=like&item_id=2'
                                     ),
                                     MessageAction(
@@ -264,7 +264,7 @@ class CallbackView(View):
                                 image_url=f'{PUBLIC_URL}/static/images/image_carousel_1.jpg',
                                 action=PostbackAction(
                                     label='函館のマンホール',
-                                    displayText='いいね',
+                                    display_text='いいね',
                                     data='action=like&item_id=1'
                                 )
                             ),
@@ -294,12 +294,12 @@ class CallbackView(View):
                             actions=[
                                 PostbackAction(
                                     label='キャンセル',
-                                    displayText='アカウント連携を解除しない',
+                                    display_text='アカウント連携を解除しない',
                                     data='action=accountLink&confirm=0'
                                 ),
                                 PostbackAction(
                                     label='解除',
-                                    displayText='アカウント連携を解除する',
+                                    display_text='アカウント連携を解除する',
                                     data='action=accountLink&confirm=1'
                                 )
                             ]
