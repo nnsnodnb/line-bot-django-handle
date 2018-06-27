@@ -132,6 +132,9 @@ USE_TZ = False
 
 STATIC_URL = '/static/'
 STATIC_ROOT = 'staticfiles/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
 
 # LINE BOT
 
@@ -141,3 +144,4 @@ LINE_BOT_ACCESS_SECRET = os.environ.get('LINE_BOT_ACCESS_SECRET')
 # Ngrok
 
 USE_NGROK = True
+HOSTNAME = '10.0.1.2:8000'

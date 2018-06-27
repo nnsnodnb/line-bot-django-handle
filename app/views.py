@@ -1,5 +1,6 @@
 from accounts.errors import LineAccountInactiveError
 from accounts.models import Line
+from django.conf import settings
 from django.http.response import HttpResponse, HttpResponseBadRequest
 from django.urls import reverse
 from django.utils.decorators import method_decorator
@@ -22,12 +23,26 @@ from .ngrok import Ngrok
 
 import re
 import requests
+import socket
 
 buttonRegex = re.compile('(ボタン|ぼたん)')
 stickerRegex = re.compile('(ステッカー|すてっかー|ステッカ|すてっか|sticker)')
-imageRegex = re.compile('(画像|がぞう)')
+imageRegex = re.compile('(画像|がぞう|写真|しゃしん)')
 videoRegex = re.compile('(動画|どうが|ムービー|むーびー|むーゔぃ|ムーヴぃ|movie)')
 locationRegex = re.compile('(場所|ばしょ|バショ|location|ろけーしょん)')
+
+try:
+    PUBLIC_URL = Ngrok().get_public_url()
+    if not PUBLIC_URL:
+        if settings.DEBUG:
+            PUBLIC_URL = f'http://{settings.HOSTNAME}'
+        else:
+            PUBLIC_URL = f'https://{settings.HOSTNAME}'
+except socket.error:
+    if settings.DEBUG:
+        PUBLIC_URL = f'http://{settings.HOSTNAME}'
+    else:
+        PUBLIC_URL = f'https://{settings.HOSTNAME}'
 
 
 class CallbackView(View):
@@ -165,14 +180,15 @@ class CallbackView(View):
             # https://developers.line.me/en/docs/messaging-api/reference/#image-message
             line_bot_api.reply_message(
                 event.reply_token,
-                ImageSendMessage(original_content_url=demo_image_url, preview_image_url=demo_image_url)
+                ImageSendMessage(original_content_url=f'{PUBLIC_URL}/static/images/spring.jpg',
+                                 preview_image_url=f'{PUBLIC_URL}/static/images/spring.jpg')
             )
         elif videoRegex.search(event.message.text.lower()):
             # https://developers.line.me/en/docs/messaging-api/reference/#video-message
             line_bot_api.reply_message(
                 event.reply_token,
-                VideoSendMessage(original_content_url='https://dl.nnsnodnb.moe/line_sample/linebot_video_sample.mp4',
-                                 preview_image_url=demo_image_url)
+                VideoSendMessage(original_content_url=f'{PUBLIC_URL}/static/videos/linebot_video_sample.mp4', 
+                                 preview_image_url=f'{PUBLIC_URL}/static/images/video_preview.jpg')
             )
         elif locationRegex.search(event.message.text.lower()):
             # https://developers.line.me/en/docs/messaging-api/reference/#location-message
@@ -242,7 +258,7 @@ class CallbackView(View):
                     template=ImageCarouselTemplate(
                         columns=[
                             ImageCarouselColumn(
-                                image_url='https://dl.nnsnodnb.moe/line_sample/image_carousel_1.jpg',
+                                image_url=f'{PUBLIC_URL}/static/images/image_carousel_1.jpg',
                                 action=PostbackAction(
                                     label='函館のマンホール',
                                     displayText='postback text1',
@@ -250,7 +266,7 @@ class CallbackView(View):
                                 )
                             ),
                             ImageCarouselColumn(
-                                image_url='https://dl.nnsnodnb.moe/line_sample/image_carousel_2.jpg',
+                                image_url=f'{PUBLIC_URL}/static/images/image_carousel_2.jpg',
                                 action=URIAction(
                                     label='白鷺',
                                     uri='https://ja.wikipedia.org/wiki/%E7%99%BD%E9%B7%BA'
@@ -292,20 +308,18 @@ class CallbackView(View):
                 response = requests.post(f'https://api.line.me/v2/bot/user/{event.source.user_id}/linkToken',
                                          headers=line_bot_api.headers).json()
 
-                public_url = Ngrok().get_public_url()
-
                 if 'linkToken' not in response:
                     return
 
                 link_token = response['linkToken']
 
-                url = f'{public_url}{reverse("accounts:line_login_view", kwargs={"link_token": link_token})}'
+                url = f'{PUBLIC_URL}{reverse("accounts:line_login_view", kwargs={"link_token": link_token})}'
 
                 line_bot_api.reply_message(
                     event.reply_token,
                     [
                         ImagemapSendMessage(
-                            base_url='https://dl.nnsnodnb.moe/line_sample',
+                            base_url=f'{PUBLIC_URL}/static/images',
                             alt_text='ImageMap sample.',
                             base_size=BaseSize(width=1040, height=520),
                             actions=[
