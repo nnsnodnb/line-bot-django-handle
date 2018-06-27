@@ -113,10 +113,9 @@ class CallbackView(View):
         data = dict(parse.parse_qsl(parse.urlsplit(event.postback.data).path))
 
         if data['action'] == 'buy':
-            line_bot_api.reply_message(
-                event.reply_token,
-                TextSendMessage('Postback received.')
-            )
+            text_send_message = TextSendMessage('Postback received.')
+        elif data['action'] == 'like':
+            text_send_message = TextSendMessage('いいねしました！')
         elif data['action'] == 'accountLink':
             line = Line.objects.get(pk=event.source.user_id)
             if not line.is_active:
@@ -206,41 +205,41 @@ class CallbackView(View):
                     template=CarouselTemplate(
                         columns=[
                             CarouselColumn(
-                                thumbnail_image_url='https://example.com/item1.jpg',
-                                title='this is menu1',
-                                text='description1',
+                                thumbnail_image_url=f'{PUBLIC_URL}/static/images/image_carousel_1.jpg',
+                                title='マンホール',
+                                text='函館、十字街電停周辺で見つけた',
                                 actions=[
                                     PostbackAction(
-                                        label='postback1',
-                                        displayText='postback text1',
-                                        data='action=buy&itemid=1'
+                                        label='いいね',
+                                        displayText='いいね！',
+                                        data='action=like&item_id=1'
                                     ),
                                     MessageAction(
-                                        label='message1',
-                                        text='message text1'
+                                        label='何かしらのラベル',
+                                        text='何かしらのメッセージ'
                                     ),
                                     URIAction(
-                                        label='uri1',
+                                        label='詳細を見る',
                                         uri='http://example.com/1'
                                     )
                                 ]
                             ),
                             CarouselColumn(
-                                thumbnail_image_url='https://example.com/item2.jpg',
-                                title='this is menu2',
-                                text='description2',
+                                thumbnail_image_url=f'{PUBLIC_URL}/static/images/image_carousel_2.jpg',
+                                title='白鷺',
+                                text='平安神宮で撮った白鷺',
                                 actions=[
                                     PostbackAction(
-                                        label='postback2',
-                                        displayText='postback text2',
-                                        data='action=buy&itemid=2'
+                                        label='いいね',
+                                        displayText='いいね！',
+                                        data='action=like&item_id=2'
                                     ),
                                     MessageAction(
-                                        label='message2',
-                                        text='message text2'
+                                        label='何かしらのラベル',
+                                        text='何かしらのメッセージ'
                                     ),
                                     URIAction(
-                                        label='uri2',
+                                        label='詳細を見る',
                                         uri='http://example.com/2'
                                     )
                                 ]
@@ -261,14 +260,14 @@ class CallbackView(View):
                                 image_url=f'{PUBLIC_URL}/static/images/image_carousel_1.jpg',
                                 action=PostbackAction(
                                     label='函館のマンホール',
-                                    displayText='postback text1',
-                                    data='action=buy&itemid=1'
+                                    displayText='いいね',
+                                    data='action=like&item_id=1'
                                 )
                             ),
                             ImageCarouselColumn(
                                 image_url=f'{PUBLIC_URL}/static/images/image_carousel_2.jpg',
                                 action=URIAction(
-                                    label='白鷺',
+                                    label='白鷺について',
                                     uri='https://ja.wikipedia.org/wiki/%E7%99%BD%E9%B7%BA'
                                 )
                             )
