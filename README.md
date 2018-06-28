@@ -58,10 +58,14 @@ $ python manage.py createsuperuser  # If you need it
 - Django 2.0.6
 - line-bot-sdk-python 1.7.1
 
+### When possible
+
+- [Ngrok](https://ngrok.com/)
+
 ## LICENSE
 
 Coming soon...
 
 ## Author
 
-Yuya Oka (@nnsnodnb)
+Yuya Oka ([@nnsnodnb](https://github.com/nnsnodnb))
