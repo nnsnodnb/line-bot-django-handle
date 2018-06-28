@@ -64,7 +64,7 @@ $ python manage.py createsuperuser  # If you need it
 
 ## LICENSE
 
-Coming soon...
+Copyright (c) 2018 Yuya Oka Released under the Apache License 2.0 (see LICENSE file)
 
 ## Author
 
