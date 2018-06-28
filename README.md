@@ -45,7 +45,7 @@ LINE BOT for demonstration handled with Django.
 ```bash
 $ git clone https://github.com/nnsnodnb/line-bot-django-handle.git
 $ cd line-bot-django-handle
-$ pip install -r requirements.txt
+$ pipenv --python 3.6.5 install
 $ cp .env.sample .env  # Fill your secret variables
 $ python manage.py migrate
 $ python manage.py collectstatic --noinput
@@ -55,6 +55,7 @@ $ python manage.py createsuperuser  # If you need it
 ## Dependencies
 
 - Python 3.6.5
+- Pipenv 2018.6.25
 - Django 2.0.6
 - line-bot-sdk-python 1.7.1
 
