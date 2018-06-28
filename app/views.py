@@ -350,7 +350,8 @@ class CallbackView(View):
         elif event.message.text == 'アカウント情報取得':
             try:
                 line = Line.objects.select_related('service_user').get(pk=event.source.user_id, is_active=True)
-                text = f'サービスユーザ名: {line.service_user.username}\nLINEユーザ名: {line.display_name}'
+                text = f'サービスユーザ名: {line.service_user.username}\nLINEユーザ名: {line.display_name}\n' \
+                       f'ステータスメッセージ: {line.status_message}'
                 line_bot_api.reply_message(
                     event.reply_token,
                     TextSendMessage(text)
