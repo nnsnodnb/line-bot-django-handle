@@ -115,7 +115,9 @@ class CallbackView(View):
 
         data = dict(parse.parse_qsl(parse.urlsplit(event.postback.data).path))
 
-        if data['action'] == 'buy':
+        if data['action'] == 'skip':
+            return
+        elif data['action'] == 'buy':
             text_send_message = TextSendMessage('Postback received.')
         elif data['action'] == 'like':
             text_send_message = TextSendMessage('いいねしました！')
@@ -131,6 +133,8 @@ class CallbackView(View):
                 line.is_active = False
                 line.save()
                 text_send_message = TextSendMessage(f'{username}さんのアカウント連携を解除しました')
+        elif 'action' not in data or data['action'] == 'skip':
+            return
 
         if not text_send_message:
             image_url = f'{PUBLIC_URL}/static/images/wrong_postback_response.jpg'
@@ -343,6 +347,36 @@ class CallbackView(View):
                 event.reply_token,
                 ImageSendMessage(original_content_url=image_url, preview_image_url=image_url)
             )
+        elif event.message.text == 'アカウント情報取得':
+            try:
+                line = Line.objects.select_related('service_user').get(pk=event.source.user_id, is_active=True)
+                text = f'サービスユーザ名: {line.service_user.username}\nLINEユーザ名: {line.display_name}'
+                line_bot_api.reply_message(
+                    event.reply_token,
+                    TextSendMessage(text)
+                )
+            except Line.DoesNotExist:
+                line_bot_api.reply_message(
+                    event.reply_token,
+                    TemplateSendMessage(
+                        alt_text='アカウント連携しますか？',
+                        template=ConfirmTemplate(
+                            text=f'アカウントを連携することで情報取得ができるようになります。アカウントを連携しますか？',
+                            actions=[
+                                PostbackAction(
+                                    label='キャンセル',
+                                    display_text='キャンセル',
+                                    data='action=skip'
+                                ),
+                                PostbackAction(
+                                    label='連携',
+                                    text='アカウント連携',
+                                    data='action=skip'
+                                )
+                            ]
+                        )
+                    )
+                )
         else:
             line_bot_api.reply_message(
                 event.reply_token,
