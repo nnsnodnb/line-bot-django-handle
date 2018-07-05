@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 from django.contrib.auth import get_user_model
 
 import random
@@ -14,7 +15,7 @@ class Nonce(models.Model):
         self.nonce = secrets.token_urlsafe(random.randint(50, 100))
 
     nonce = models.CharField(max_length=135, blank=False, null=False, default='', primary_key=True)
-    user = models.ForeignKey(UserModel, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = 'Nonce'
