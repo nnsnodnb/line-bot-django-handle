@@ -47,6 +47,7 @@ $ git clone https://github.com/nnsnodnb/line-bot-django-handle.git
 $ cd line-bot-django-handle
 $ pipenv --python 3.6.5 install
 $ cp .env.sample .env  # Fill your secret variables
+# Edit your HOSTNAME in line_bot_project/settings.py
 $ python manage.py migrate
 $ python manage.py collectstatic --noinput
 $ python manage.py createsuperuser  # If you need it
